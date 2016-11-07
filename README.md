@@ -5,10 +5,10 @@
   them executable where needed.
 
 * `changeomatic.sh`
-  is a simple shell script to start, stop and inspect [changeomatic](https://github.com/sixtyeight/changeomatic).
+  is a simple shell script to start, stop and inspect [changeomatic](https://github.com/metalab-kassomat/kassomat-changeomatic).
 
 * `payout.service`
-  is a systemd unit file which starts and stops [payoutd](https://github.com/sixtyeight/Payout)
+  is a systemd unit file which starts and stops [payoutd](https://github.com/metalab-kassomat/kassomat-payout)
 
 * `kassomat-maintenance.sh`
   opens an xterm with `kassomat-set-coin-levels.py` running. Normally
