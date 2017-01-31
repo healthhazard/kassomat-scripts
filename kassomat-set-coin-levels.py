@@ -9,13 +9,6 @@ pubsub = redis.pubsub()
 pubsub.subscribe('hopper-response')
 
 
-def to_int(s):
-  try:
-    return int(s)
-  except ValueError:
-    return None
-
-
 def wait_for_message(correlId):
     for msg in pubsub.listen():
         if msg['type'] != 'message':
@@ -64,8 +57,9 @@ def change_levels(levels):
     
         if raw_count == '':
     	    break
-        count = to_int(raw_count)
-        if not count:
+	try:
+	    count = int(raw_count)
+        except ValueError:
     	    print("invalid count, please enter an integer.")
     	    continue
     
