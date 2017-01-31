@@ -56,12 +56,12 @@ def change_levels(levels):
             operator = None
     
         if raw_count == '':
-    	    break
-	try:
-	    count = int(raw_count)
+            break
+        try:
+            count = int(raw_count)
         except ValueError:
-    	    print("invalid count, please enter an integer.")
-    	    continue
+            print("invalid count, please enter an integer.")
+            continue
     
         if operator == '=':
             levels[value] = count
