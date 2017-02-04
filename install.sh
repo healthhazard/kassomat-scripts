@@ -3,7 +3,7 @@ set -eu
 
 dir=$(dirname $(readlink -f "$0"))
 
-executables=(changeomatic.sh kassomat-maintenance.sh payout-log-less.sh payout-restart.sh kassomat-set-coin-levels.py payout-log-tail.sh)
+executables=(changeomatic.sh kassomat-maintenance.sh payout-log-less.sh payout-restart.sh kassomat-set-coin-levels.py payout-log-tail.sh kassomat-refill.py)
 echo $executables
 echo "installing payout systemd unit file"
 ln -svf ${dir}/payout.service /etc/systemd/system/payout.service
