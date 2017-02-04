@@ -10,8 +10,8 @@ redis = StrictRedis()
 hopper_response = redis.pubsub()
 hopper_response.subscribe('hopper-response')
 
-hopper_events = redis.pubsub()
-hopper_events.subscribe('hopper-event')
+hopper_event = redis.pubsub()
+hopper_event.subscribe('hopper-event')
 
 
 class SSPError(Exception):
@@ -32,7 +32,7 @@ def wait_for_response(correlId):
 
 def wait_for_event(event):
     """blocks until it can return a matching_event."""
-    for msg in hopper_response.listen():
+    for msg in hopper_event.listen():
         if msg['type'] != 'message':
             continue
         data = json.loads(msg['data'])
@@ -47,7 +47,7 @@ def levels_from_message(msg):
 
 def print_levels(levels):
     for value, count in levels.items():
-        print("%3d Eurocent x %3d : %s" % (value, levels[value]))
+        print("%3d Eurocent x %3d" % (value, levels[value]))
 
 
 def fatal(msg):
@@ -60,7 +60,7 @@ def hopper_request(command, **args):
     """send a request to hoppers request queue and wait for a response."""
     correlId = str(uuid.uuid4())
     args.update({
-        "cmd": "get-all-levels",
+        "cmd": command,
         "msgId": correlId
     })
     redis.publish('hopper-request', json.dumps(args))
@@ -86,7 +86,7 @@ def set_levels(levels):
 
 def empty_and_count():
     print('Asking the machine to empty itself.')
-    hopper_request('smart_empty')
+    hopper_request('smart-empty')
     wait_for_event('smart emptied')
     msg = hopper_request('cashbox-payout-operation-data')
     levels = levels_from_message(msg)
@@ -110,14 +110,14 @@ def refill():
 
     print("Just let me check. Are you ready to catch all the coins, which \
     are going to fall out of me in a moment? Then press enter")
-    input('> ')
+    raw_input('> ')
     actual_levels = empty_and_count()
     if expected_levels != actual_levels:
         fatal('Uh, the actual levels did not match my expectations.')
 
     print('Looks good. Please put (only) the coins you want to add \
     into the machine, so I can count them. Then press enter')
-    input('> ')
+    raw_input('> ')
 
     additional_levels = empty_and_count()
     expected_levels = dict()
@@ -130,7 +130,7 @@ def refill():
     print_levels(expected_levels)
     print('...lets check that. Put *all* the coins the the machine \
 now and we are going to empty one more time, okay?')
-    input('> ')
+    raw_input('> ')
 
     actual_levels = empty_and_count()
     if expected_levels != actual_levels:
