@@ -113,7 +113,9 @@ def refill():
     raw_input('> ')
     actual_levels = empty_and_count()
     if expected_levels != actual_levels:
-        fatal('Uh, the actual levels did not match my expectations.')
+        fatal('Uh, the actual levels did not match my expectations:')
+        print_levels(actual_levels)
+
 
     print('Looks good. Please put (only) the coins you want to add \
     into the machine, so I can count them. Then press enter')
@@ -134,7 +136,8 @@ now and we are going to empty one more time, okay?')
 
     actual_levels = empty_and_count()
     if expected_levels != actual_levels:
-        fatal('Uh, the actual levels did not match my expectations.')
+        fatal('Uh, the actual levels did not match my expectations:')
+        print_levels(actual_levels)
 
     print('Okay. That\'s it, I am going to save this state to the machine',
           'so please put *all* your coins into it and you are done.')
