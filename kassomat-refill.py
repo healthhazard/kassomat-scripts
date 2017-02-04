@@ -51,7 +51,7 @@ def print_levels(levels):
 
 
 def fatal(msg):
-    print(msg, file=sys.stderr)
+    print >> sys.stderr, msg
     time.sleep(4)
     sys.exit(1)
 
@@ -59,11 +59,11 @@ def fatal(msg):
 def hopper_request(command, **args):
     """send a request to hoppers request queue and wait for a response."""
     correlId = str(uuid.uuid4())
-    redis.publish('hopper-request', json.dumps(
-        args.update({
-            "cmd": "get-all-levels",
-            "msgId": correlId
-        })))
+    args.update({
+        "cmd": "get-all-levels",
+        "msgId": correlId
+    })
+    redis.publish('hopper-request', json.dumps(args))
     return wait_for_response(correlId)
 
 
