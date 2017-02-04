@@ -89,7 +89,11 @@ def empty_and_count():
     hopper_request('smart_empty')
     wait_for_event('smart emptied')
     msg = hopper_request('cashbox-payout-operation-data')
-    return levels_from_message(msg)
+    levels = levels_from_message(msg)
+    if 0 in levels and levels[0] > 0:
+        print('Warning: detected %s unknown coins.' % levels[0])
+        del(levels[0])
+    return levels
 
 
 def refill():
