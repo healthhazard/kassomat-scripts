@@ -47,7 +47,7 @@ def count_coins():
         print("waiting for 'smart emptied' event")  
 
         smart_emptied = wait_for_event('smart emptied')
-	print("amount of money emptied: %d" % (int(smart_emptied['amount'])))
+        print("amount of money emptied: %d" % (int(smart_emptied['amount'])))
 
         get_cashbox_payout_operation_data()
 

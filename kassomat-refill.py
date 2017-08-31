@@ -113,8 +113,11 @@ def refill():
     raw_input('> ')
     actual_levels = empty_and_count()
     if expected_levels != actual_levels:
-        fatal('Uh, the actual levels did not match my expectations:')
+        print("Expected levels: ")
+        print_levels(expected_levels)
+        print("Actual levels: ")
         print_levels(actual_levels)
+        fatal('Uh, the actual levels did not match my expectations:')
 
 
     print('Looks good. Please put (only) the coins you want to add \
@@ -126,7 +129,7 @@ def refill():
     for coin, count in additional_levels.items():
         expected_levels[coin] = actual_levels[coin] + count
 
-    print('Okay, after you addded...')
+    print('Okay, after you added...')
     print_levels(additional_levels)
     print('...we should have...')
     print_levels(expected_levels)
