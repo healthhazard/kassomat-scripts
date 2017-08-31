@@ -2,6 +2,7 @@
 import json
 import uuid
 from redis import StrictRedis
+import sh
 
 
 redis = StrictRedis()
@@ -10,6 +11,8 @@ pubsub.subscribe('hopper-response')
 event_pubsub = redis.pubsub()
 event_pubsub.subscribe('hopper-event')
 
+def lolprint(msg):
+    print(sh.lolcat(sh.echo(msg)))
 
 def to_int(s):
   try:
@@ -44,16 +47,16 @@ def count_coins():
 
         smart_empty()
 
-        print("waiting for 'smart emptied' event")  
+        lolprint("waiting for 'smart emptied' event")  
 
         smart_emptied = wait_for_event('smart emptied')
-        print("amount of money emptied: %d" % (int(smart_emptied['amount'])))
+        lolprint("amount of money emptied: %d" % (int(smart_emptied['amount'])))
 
         get_cashbox_payout_operation_data()
 
 
 def get_cashbox_payout_operation_data(): 
-    print("Sending cashbox-payout-operation-data to the machine:")
+    lolprint("Sending cashbox-payout-operation-data to the machine:")
 
     correlId = str(uuid.uuid4()) 
     redis.publish('hopper-request', json.dumps({
@@ -61,17 +64,17 @@ def get_cashbox_payout_operation_data():
          "msgId": correlId
     }))
     msg = wait_for_message(correlId)
-#    status = 'success' if msg['result'] == 'ok' else 'error'
+#   status = 'success' if msg['result'] == 'ok' else 'error'
     status = "ok"
  
     levels = {int(level['value']): int(level['level']) for level in msg['levels']}
-    print("Quantity of coins emptied:")
+    lolprint("Quantity of coins emptied:")
     for value, count in levels.items():
-        print("%3d Eurocent x %3d" % (value, levels[value]))
+        lolprint("%3d Eurocent x %3d" % (value, levels[value]))
 
 
 def smart_empty(): 
-    print("Sending smart-empty to the machine:")
+    lolprint("Sending smart-empty to the machine:")
 
     correlId = str(uuid.uuid4()) 
     redis.publish('hopper-request', json.dumps({
@@ -83,8 +86,8 @@ def smart_empty():
 
 
 if __name__ == '__main__':
-    print("Welcome to Count-o-matic!\n")
+    lolprint("Welcome to Count-o-matic!\n")
 
     count_coins() 
  
-    print("Bye.")
+    lolprint("Bye.")
