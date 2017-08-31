@@ -46,7 +46,7 @@ def levels_from_message(msg):
 
 
 def print_levels(levels):
-    for value, count in levels.items():
+    for value, count in sorted(levels.items()):
         print("%3d Eurocent x %3d" % (value, levels[value]))
 
 
@@ -79,7 +79,7 @@ def set_levels(levels):
     as new coin leves for the machine"""
 
     print("Sending the following values to the machine:")
-    for coin, count in levels.items():
+    for coin, count in sorted(levels.items()):
         hopper_request('set-denomination-level',
                        amount=coin, level=count)
 
@@ -104,7 +104,7 @@ def refill():
 | . \ (_| \__ \__ \ (_) | | | | | | (_| | |_
 |_|\_\__,_|___/___/\___/|_| |_| |_|\__,_|\__| v1.33.7
 """)
-    print("I believe, they following amount of coins should be inside me:\n")
+    print("I believe, the following amount of coins should be inside me:\n")
     expected_levels = get_levels()
     print_levels(expected_levels)
 
@@ -113,12 +113,12 @@ def refill():
     raw_input('> ')
     actual_levels = empty_and_count()
     if expected_levels != actual_levels:
-        print("Actual levels: ")
+        print("Uh, the actual levels did not match my expectations: \n Actual Values:")
         print_levels(actual_levels)
-        fatal('Uh, the actual levels did not match my expectations:')
+        fatal('I\'m exiting now. Byebye')
 
 
-    print('Looks good. Please put (only) the coins you want to add \
+    print('Looks good. Please put *ONLY* the coins you want to add \
     into the machine, so I can count them. Then press enter')
     raw_input('> ')
 
@@ -131,17 +131,18 @@ def refill():
     print_levels(additional_levels)
     print('...we should have...')
     print_levels(expected_levels)
-    print('...lets check that. Put *all* the coins the the machine \
-now and we are going to empty one more time, okay?')
+    print('...lets check that. Please put *ALL* the coins into the machine \
+    now and we are going to empty one more time, okay?')
     raw_input('> ')
 
     actual_levels = empty_and_count()
     if expected_levels != actual_levels:
-        fatal('Uh, the actual levels did not match my expectations:')
+        print("Uh, the actual levels did not match my expectations: \n Actual Values:")
         print_levels(actual_levels)
+        fatal('I\'m exiting now. Byebye')
 
     print('Okay. That\'s it, I am going to save this state to the machine',
-          'so please put *all* your coins into it and you are done.')
+          'so please put *ALL* your coins into it and you are done.')
 
     print_levels(actual_levels)
     set_levels(actual_levels)

@@ -80,7 +80,7 @@ def change_levels(levels):
 
 def set_levels(levels): 
     print("Sending the following values to the machine:")
-    for value, count in levels.items():
+    for value, count in sorted(levels.items()):
         correlId = str(uuid.uuid4()) 
         redis.publish('hopper-request', json.dumps({
             "cmd": "set-denomination-level",
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     print("Waiting for current coin levels\n")
     levels = get_levels()
     print("The following coins are in the machine:\n")
-    for value, count in levels.items():
+    for value, count in sorted(levels.items()):
         print("%3d Eurocent x %3d" % (value, count))
 
     while True:
