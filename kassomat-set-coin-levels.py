@@ -2,15 +2,12 @@
 import json
 import uuid
 from redis import StrictRedis
-import sh
 
 
 redis = StrictRedis()
 pubsub = redis.pubsub()
 pubsub.subscribe('hopper-response')
 
-def lolprint(msg):
-    print(sh.lolcat(sh.echo(msg)))
 
 def wait_for_message(correlId):
     for msg in pubsub.listen():
@@ -32,7 +29,7 @@ def get_levels():
 
 
 def change_levels(levels):
-    lollolprint("""
+    print("""
     Please enter the desired coin value.
      - empty line to quit
      - raw numbers to add coins.
@@ -49,7 +46,7 @@ def change_levels(levels):
         except ValueError:
           value = None
         if not value or value not in levels.keys():
-    	    lolprint("invalid value, valid are:",
+    	    print("invalid value, valid are:",
     	    ", ".join([str(k) for k in levels.keys()]))
     	    continue
     
@@ -66,7 +63,7 @@ def change_levels(levels):
         try:
             count = int(raw_count)
         except ValueError:
-            lolprint("invalid count, please enter an integer.")
+            print("invalid count, please enter an integer.")
             continue
     
         if operator == '=':
@@ -77,12 +74,12 @@ def change_levels(levels):
         else:
             levels[value] = levels[value] + count
     
-        lolprint("new: %3d Eurocent x %3d" % (value, levels[value]))
+        print("new: %3d Eurocent x %3d" % (value, levels[value]))
     return levels
 
 
 def set_levels(levels): 
-    lolprint("Sending the following values to the machine:")
+    print("Sending the following values to the machine:")
     for value, count in sorted(levels.items()):
         correlId = str(uuid.uuid4()) 
         redis.publish('hopper-request', json.dumps({
@@ -93,23 +90,23 @@ def set_levels(levels):
 	}))
         msg = wait_for_message(correlId)
         status = 'success' if msg['result'] == 'ok' else 'error'
-        lolprint("%3d Eurocent x %3d : %s" % (value, levels[value], status))
+        print("%3d Eurocent x %3d : %s" % (value, levels[value], status))
 
 
 
 if __name__ == '__main__':
-    lolprint("Welcome to kassomat maintenance mode!\n")
-    lolprint("Waiting for current coin levels\n")
+    print("Welcome to kassomat maintenance mode!\n")
+    print("Waiting for current coin levels\n")
     levels = get_levels()
-    lolprint("The following coins are in the machine:\n")
+    print("The following coins are in the machine:\n")
     for value, count in sorted(levels.items()):
-        lolprint("%3d Eurocent x %3d" % (value, count))
+        print("%3d Eurocent x %3d" % (value, count))
 
     while True:
         levels = change_levels(levels)
         set_levels(levels)
         
-        lolprint("""
+        print("""
         want to change something?
           - empty line to quit
           - "yes" or anything else, really, to try again.
@@ -118,4 +115,4 @@ if __name__ == '__main__':
         if answer == '':
             break 
  
-    lolprint("Bye.")
+    print("Bye.")
