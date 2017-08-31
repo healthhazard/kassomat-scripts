@@ -41,7 +41,10 @@ def change_levels(levels):
         raw_value = raw_input("> coin value: ")
         if raw_value == '':
     	    break
-        value = to_int(raw_value)
+        try:
+          value = int(raw_value)
+        except ValueError:
+          value = None
         if not value or value not in levels.keys():
     	    print("invalid value, valid are:",
     	    ", ".join([str(k) for k in levels.keys()]))

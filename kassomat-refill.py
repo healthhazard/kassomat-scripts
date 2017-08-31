@@ -92,7 +92,7 @@ def empty_and_count():
     levels = levels_from_message(msg)
     if 0 in levels and levels[0] > 0:
         print('Warning: detected %s unknown coins.' % levels[0])
-        del(levels[0])
+    del(levels[0])
     return levels
 
 
@@ -102,7 +102,7 @@ def refill():
 | |/ /__ _ ___ ___  ___  _ __ ___   __ _| |_
 | ' // _` / __/ __|/ _ \| '_ ` _ \ / _` | __|
 | . \ (_| \__ \__ \ (_) | | | | | | (_| | |_
-|_|\_\__,_|___/___/\___/|_| |_| |_|\__,_|\__|
+|_|\_\__,_|___/___/\___/|_| |_| |_|\__,_|\__| v1.33.7
 """)
     print("I believe, they following amount of coins should be inside me:\n")
     expected_levels = get_levels()
@@ -113,8 +113,6 @@ def refill():
     raw_input('> ')
     actual_levels = empty_and_count()
     if expected_levels != actual_levels:
-        print("Expected levels: ")
-        print_levels(expected_levels)
         print("Actual levels: ")
         print_levels(actual_levels)
         fatal('Uh, the actual levels did not match my expectations:')

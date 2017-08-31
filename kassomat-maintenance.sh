@@ -18,6 +18,6 @@ DISPLAY=:0 xterm \
   -n kassomat-maintenance \
   -T kassomat-maintenance \
   -fa "Monospace" -fs 20 \
-  -e /usr/local/bin/kassomat-refill.py
+  -e kassomat-set-coin-levels
 
 
