@@ -78,7 +78,7 @@ def get_and_set_cashbox_payout_operation_data():
     for value, count in sorted(levels.items()):
         print("%3d Eurocent x %3d" % (value, levels[value]))
     
-    if 0 in levels and levels[0] > 0 :
+    if 0 in levels and not levels[0] > 0 :
         print("Setting this levels as new value now.")
         set_levels(levels)
     else:
