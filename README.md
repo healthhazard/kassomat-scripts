@@ -19,6 +19,9 @@
 
 * `kassomat-count-coins.py`
   ...emptys hopper, the count unit, and counts everything inside. should be manually invoked.
+  
+* `kassomat-count-and-set-coin-level.py`
+  ...emptys hopper, the count unit, and counts everything inside and then sets this as new count level. should be manually invoked.
 
 * `xsession`
   initializes the user session. Hides the mouse pointer, starts changeomatic and
