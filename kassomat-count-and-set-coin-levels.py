@@ -17,6 +17,29 @@ def to_int(s):
   except ValueError:
     return None
 
+def hopper_request(command, **args):
+    """send a request to hoppers request queue and wait for a response."""
+    correlId = str(uuid.uuid4())
+    args.update({
+        "cmd": command,
+        "msgId": correlId
+    })
+    redis.publish('hopper-request', json.dumps(args))
+    return wait_for_response(correlId)
+
+
+def wait_for_response(correlId):
+    """blocks until it can return a message with a matching correlId."""
+    for msg in pubsub.listen():
+        if 'sspError' in msg:
+            raise SSPError(msg['sspError'])
+        if msg['type'] != 'message':
+            continue
+        data = json.loads(msg['data'])
+        if data['correlId'] == correlId:
+            return data
+
+
 def set_levels(levels):
     """set an array where coin values are the keys and their counts are values
     as new coin leves for the machine"""
@@ -33,7 +56,7 @@ def wait_for_message(correlId):
             continue
         data = json.loads(msg['data'])
         if data['correlId'] == correlId:
- 	    return data
+            return data
 
 
 def wait_for_event(event):
@@ -49,11 +72,11 @@ def count_coins():
     while True:
         raw_value = raw_input("> to count coins now, please enter 'yes': ")
         if raw_value != 'yes':
-    	    break
+            break
 
         smart_empty()
 
-        print("waiting for 'smart emptied' event")  
+        print("waiting for 'smart emptied' event")
 
         smart_emptied = wait_for_event('smart emptied')
         print("amount of money emptied: %d" % (int(smart_emptied['amount'])))
@@ -61,10 +84,10 @@ def count_coins():
         get_and_set_cashbox_payout_operation_data()
 
 
-def get_and_set_cashbox_payout_operation_data(): 
+def get_and_set_cashbox_payout_operation_data():
     print("Sending cashbox-payout-operation-data to the machine:")
 
-    correlId = str(uuid.uuid4()) 
+    correlId = str(uuid.uuid4())
     redis.publish('hopper-request', json.dumps({
          "cmd": "cashbox-payout-operation-data",
          "msgId": correlId
@@ -72,12 +95,12 @@ def get_and_set_cashbox_payout_operation_data():
     msg = wait_for_message(correlId)
 #    status = 'success' if msg['result'] == 'ok' else 'error'
     status = "ok"
- 
+
     levels = {int(level['value']): int(level['level']) for level in msg['levels']}
     print("Quantity of coins emptied:")
     for value, count in sorted(levels.items()):
         print("%3d Eurocent x %3d" % (value, levels[value]))
-    
+
     if 0 in levels and not levels[0] > 0 :
         print("Setting this levels as new value now.")
         set_levels(levels)
@@ -85,10 +108,10 @@ def get_and_set_cashbox_payout_operation_data():
         print("Unknown Coins found, please remove them. Before runnig this again.")
 
 
-def smart_empty(): 
+def smart_empty():
     print("Sending smart-empty to the machine:")
 
-    correlId = str(uuid.uuid4()) 
+    correlId = str(uuid.uuid4())
     redis.publish('hopper-request', json.dumps({
          "cmd": "smart-empty",
          "msgId": correlId
@@ -100,6 +123,6 @@ def smart_empty():
 if __name__ == '__main__':
     print("Welcome to Count-o-matic!\n")
 
-    count_coins() 
- 
+    count_coins()
+
     print("Bye.")
